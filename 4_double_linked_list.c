@@ -1,211 +1,140 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef struct node {
+typedef struct doubly_linked_list
+{
+    struct doubly_linked_list *prev;
     int data;
-    struct node *prev;
-    struct node *next;
-}node;
+    struct doubly_linked_list *next;
+} node;
 
-node *head = NULL;
+node *start = NULL;
+node *last = NULL;
 
-/* Insert at beginning */
-void insert_begin() {
-    node *newnode;
-    int value;
+node *getnode()
+{
+    node *ptr = (node *)malloc(sizeof(node));
 
-    newnode = (struct node *)malloc(sizeof(struct node));
-    printf("Enter value: ");
-    scanf("%d", &value);
-
-    newnode->data = value;
-    newnode->prev = NULL;
-    newnode->next = head;
-
-    if (head != NULL)
-        head->prev = newnode;
-
-    head = newnode;
-}
-
-/* Insert at end */
-void insert_end() {
-    node *newnode, *temp;
-    int value;
-
-    newnode = (struct node *)malloc(sizeof(struct node));
-    printf("Enter value: ");
-    scanf("%d", &value);
-
-    newnode->data = value;
-    newnode->next = NULL;
-
-    if (head == NULL) {
-        newnode->prev = NULL;
-        head = newnode;
-    } else {
-        temp = head;
-        while (temp->next != NULL)
-            temp = temp->next;
-
-        temp->next = newnode;
-        newnode->prev = temp;
+    if (ptr == NULL)
+    {
+        printf("Memory is full ,new node can't be generated.");
+        return 0;
     }
+
+    int data;
+    printf("Enter the data: \n");
+    scanf("%d", &data);
+
+    ptr->prev = NULL;
+    ptr->data = data;
+    ptr->next = NULL;
+
+    return ptr;
 }
 
-/* Delete from beginning */
-void delete_begin() {
-    node *temp;
+void creation()
+{
+    node *newnode = getnode();
+    node *ptr = start;
 
-    if (head == NULL) {
-        printf("List is empty\n");
+    if (start == NULL)
+    {
+        start = last = newnode;
         return;
     }
 
-    temp = head;
-    head = head->next;
+    while (ptr->next != NULL)
+    {
+        ptr = ptr->next;
+    }
 
-    if (head != NULL)
-        head->prev = NULL;
-
-    free(temp);
-    printf("Node deleted from beginning\n");
+    ptr->next = newnode;
+    newnode->prev = ptr;
+    last = newnode;
 }
 
-/* Delete from end */
-void delete_end() {
-    node *temp;
+void forward_traverse()
+{
+    node *ptr = start;
+    int i = 1;
 
-    if (head == NULL) {
-        printf("List is empty\n");
+    if (start == NULL)
+    {
+        printf("List is empty,there is no data present.");
         return;
     }
 
-    temp = head;
-    while (temp->next != NULL)
-        temp = temp->next;
-
-    if (temp->prev != NULL)
-        temp->prev->next = NULL;
-    else
-        head = NULL;
-
-    free(temp);
-    printf("Node deleted from end\n");
+    while (ptr->next != NULL)
+    {
+        printf("Element %d:%d \n", i, ptr->data);
+        ptr = ptr->next;
+        i++;
+    }
 }
 
-/* Display list */
-void display() {
-     node *temp;
+void reverse_traverse()
+{
+    node *ptr = last;
+    int i = 0;
 
-    if (head == NULL) {
-        printf("List is empty\n");
+    if (start == NULL)
+    {
+        printf("List is empty,there is no data present.");
         return;
     }
 
-    temp = head;
-    printf("Doubly Linked List: ");
-    while (temp != NULL) {
-        printf("%d <-> ", temp->data);
-        temp = temp->next;
+    while (ptr->prev != NULL)
+    {
+        printf("Element %d:%d \n", i, ptr->data);
+        ptr = ptr->prev;
+        i++;
     }
-    printf("NULL\n");
 }
 
-/* Main function */
-int main() {
-    int choice;
+int main_menu()
+{
+    int choose;
+    printf("Choose the operation that you want to perform:\n");
+    printf("Press 1 for creation.\n");
+    printf("Press 2 for insertion.\n");
+    printf("Press 3 for deletion.\n");
+    printf("Press 4 for forward_traversal.\n");
+    printf("Press 5 for reverse_traversal.\n");
+    printf("Press 6 for Exit.\n");
+    scanf("%d", &choose);
+    return choose;
+}
 
-    while (1) {
-        printf("\n--- Doubly Linked List Operations ---\n");
-        printf("1. Insert at Beginning\n");
-        printf("2. Insert at End\n");
-        printf("3. Delete from Beginning\n");
-        printf("4. Delete from End\n");
-        printf("5. Display\n");
-        printf("6. Exit\n");
-        printf("Enter your choice: ");
-        scanf("%d", &choice);
+int main()
+{
+    int main_choice;
 
-        switch (choice) {
+    do
+    {
+        main_choice = main_menu();
+        switch (main_choice)
+        {
         case 1:
-            insert_begin();
+            creation();
+            printf("\n");
             break;
+
         case 2:
-            insert_end();
+            forward_traverse();
+            printf("\n");
             break;
+
         case 3:
-            delete_begin();
+            reverse_traverse();
+            printf("\n");
             break;
+
         case 4:
-            delete_end();
-            break;
-        case 5:
-            display();
-            break;
-        case 6:
-            exit(0);
+            return 0;
+
         default:
-            printf("Invalid choice\n");
+            printf("You press the wrong button!try again. \n");
         }
-    }
+    } while (1);
     return 0;
 }
-
-// --- Doubly Linked List Operations ---
-
-// 1. Insert at Beginning
-// 2. Insert at End
-// 3. Delete from Beginning
-// 4. Delete from End
-// 5. Display
-// 6. Exit
-//    Enter your choice: 1
-//    Enter value: 10
-
-// Enter your choice: 1
-// Enter value: 5
-
-// Enter your choice: 2
-// Enter value: 20
-
-// Enter your choice: 2
-// Enter value: 30
-
-// Enter your choice: 5
-// Doubly Linked List: 5 <-> 10 <-> 20 <-> 30 <-> NULL
-
-// Enter your choice: 3
-// Node deleted from beginning
-
-// Enter your choice: 5
-// Doubly Linked List: 10 <-> 20 <-> 30 <-> NULL
-
-// Enter your choice: 4
-// Node deleted from end
-
-// Enter your choice: 5
-// Doubly Linked List: 10 <-> 20 <-> NULL
-
-// Enter your choice: 3
-// Node deleted from beginning
-
-// Enter your choice: 3
-// Node deleted from beginning
-
-// Enter your choice: 5
-// Doubly Linked List: 20 <-> NULL
-
-// Enter your choice: 4
-// Node deleted from end
-
-// Enter your choice: 5
-// List is empty
-
-// Enter your choice: 3
-// List is empty
-
-// Enter your choice: 4
-// List is empty
-
-// Enter your choice: 6

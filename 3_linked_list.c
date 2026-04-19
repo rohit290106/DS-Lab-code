@@ -1,277 +1,346 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef struct linked_list {
+typedef struct linked_list
+{
     int data;
     struct linked_list *next;
 } node;
 
 node *start = NULL;
 
-node *getnode() {
-    node *ptr = (node *)malloc(sizeof(node));
-    if (ptr == NULL) {
-        printf("Memory error\n");
-        return NULL;
-    }
-    printf("Enter data: ");
-    scanf("%d", &ptr->data);
+node *getnode()
+{
+    node *ptr;
+    ptr = (node *)malloc(sizeof(node));
+
+    if (ptr == NULL)
+        return 0;
+
+    int data;
+    printf("Enter the value of data:\n");
+    scanf("%d", &data);
+
+    ptr->data = data;
     ptr->next = NULL;
+
     return ptr;
 }
 
-void traversal() {
-    if (start == NULL) {
-        printf("List is EMPTY\n");
-        return;
-    }
-    node *ptr = start;
-    printf("List: ");
-    while (ptr != NULL) {
-        printf("%d", ptr->data);
-        ptr = ptr->next;
-    }
-}
+void creation()
+{
+    node *newnode = getnode();
 
-void creation() {
-    node *n = getnode();
-    if (start == NULL) {
-        start = n;
+    if (start == NULL)
+    {
+        start = newnode;
         return;
     }
+
     node *ptr = start;
     while (ptr->next != NULL)
         ptr = ptr->next;
-    ptr->next = n;
-    traversal();
+    ptr->next = newnode;
 }
 
-void insertBegin() {
-    node *n = getnode();
-    n->next = start;
-    start = n;
-    printf("Inserted %d at begin\n", n->data);
-}
+void insertion_at_beginning()
+{
+    node *newnode = getnode();
 
-void insertEnd() {
-    node *n = getnode();
-    if (start == NULL) {
-        start = n;
+    if (start == NULL)
+    {
+        start = newnode;
         return;
     }
+
+    newnode->next = start;
+    start = newnode;
+
+    printf("The inserted element is %d\n", newnode->data);
+}
+
+void insertion_at_specific_position()
+{
+    node *newnode = getnode();
     node *ptr = start;
+    int i = 1;
+
+    int position;
+    printf("Enter the position where you want to enter the data: \n");
+    scanf("%d", &position);
+
+    if (position == 1)
+    {
+        insertion_at_beginning();
+        return;
+    }
+
+    while (i != position - 1 && ptr != NULL)
+    {
+        ptr = ptr->next;
+        i++;
+    }
+
+    if (ptr == NULL)
+    {
+        printf("This position is invalid!\n");
+        return;
+    }
+
+    newnode->next = ptr->next;
+    ptr->next = newnode;
+
+    printf("The inserted element is %d\n", newnode->data);
+}
+
+void insertion_at_end()
+{
+    node *newnode = getnode();
+
+    if (start == NULL)
+    {
+        start = newnode;
+        return;
+    }
+
+    node *ptr = start;
+
     while (ptr->next != NULL)
         ptr = ptr->next;
-    ptr->next = n;
-    printf("Inserted %d at end\n", n->data);
+
+    ptr->next = newnode;
+
+    printf("The inserted element is %d\n", newnode->data);
 }
 
-void insertPos() {
-    int pos;
-    printf("Enter position: ");
-    scanf("%d", &pos);
-    if (pos == 1) {
-        insertBegin();
+void deletion_at_beginning()
+{
+    if (start == NULL)
+    {
+        printf("Linked list is empty deletion operation can't be performed.\n");
         return;
     }
-    node *n = getnode();
-    node *ptr = start;
-    for (int i = 1; i < pos - 1 && ptr != NULL; i++)
-        ptr = ptr->next;
-    if (ptr == NULL) {
-        printf("Invalid position!\n");
-        return;
-    }
-    n->next = ptr->next;
-    ptr->next = n;
-    printf("Inserted %d at pos %d\n", n->data, pos);
-}
 
-void deleteBegin() {
-    if (start == NULL) {
-        printf("List is EMPTY\n");
-        return;
-    }
     node *ptr = start;
+
     start = start->next;
-    printf("Deleted %d\n", ptr->data);
+
+    printf("The deleted element is %d\n", ptr->data);
     free(ptr);
 }
 
-void deleteEnd() {
-    if (start == NULL) {
-        printf("List is EMPTY\n");
+void deletion_at_specific_position()
+{
+    node *ptr_front = start->next;
+    node *ptr_back = start;
+    int i = 1;
+
+    int position;
+    printf("Enter the position you want to delete:\n");
+    scanf("%d", &position);
+
+    if (start == NULL&&position==0)
+    {
+        printf("Linked list is empty deletion operation can't be performed.\n");
         return;
     }
-    if (start->next == NULL) {
-        printf("Deleted %d\n", start->data);
+    else if (start->next == NULL&&position==1)
+    {
+        deletion_at_beginning();
+        return;
+    }
+
+    while (i != position - 1)
+    {
+        ptr_front = ptr_front->next;
+        ptr_back = ptr_back->next;
+        i++;
+    }
+
+    ptr_back->next = ptr_front->next;
+    printf("The deleted data is %d.\n", ptr_front->data);
+    free(ptr_front);
+}
+
+void deletion_at_end()
+{
+    if (start == NULL)
+        printf("Linked list is empty deletion operation can't be performed.\n");
+    else if (start->next == NULL)
+    {
+        printf("The deleted data is %d.\n", start->data);
         free(start);
         start = NULL;
-        return;
     }
-    node *front = start->next;
-    node *back = start;
-    while (front->next != NULL) {
-        front = front->next;
-        back = back->next;
+    else
+    {
+        node *ptr_front = start->next;
+        node *ptr_back = start;
+
+        while (ptr_front->next != NULL)
+        {
+            ptr_front = ptr_front->next;
+            ptr_back = ptr_back->next;
+        }
+
+        printf("The deleted data is %d.\n", ptr_front->data);
+        ptr_back->next = NULL;
+
+        free(ptr_front);
     }
-    printf("Deleted %d\n", front->data);
-    back->next = NULL;
-    free(front);
 }
 
-void deletePos() {
-    if (start == NULL) {
-        printf("List is EMPTY\n");
-        return;
+void traversal()
+{
+    if (start == NULL)
+        printf("No data in a list.\n");
+    else
+    {
+        node *ptr = start;
+        int i = 1;
+
+        printf("Data of a linked list: \n");
+
+        while (ptr != NULL)
+        {
+            printf("Element %d : %d\n", i, ptr->data);
+            i++;
+            ptr = ptr->next;
+        }
     }
-    int pos;
-    printf("Enter position: ");
-    scanf("%d", &pos);
-    if (pos == 1) {
-        deleteBegin();
-        return;
-    }
-    node *front = start->next;
-    node *back = start;
-    for (int i = 1; i < pos - 1 && front != NULL; i++) {
-        front = front->next;
-        back = back->next;
-    }
-    if (front == NULL) {
-        printf("Invalid position!\n");
-        return;
-    }
-    back->next = front->next;
-    printf("Deleted %d\n", front->data);
-    free(front);
 }
 
-int main() {
-    int ch, ch2;
-    do {
-        printf("\n1.Creation 2.Insertion 3.Deletion 4.Traversal 5.Exit\n");
-        printf("Choice: ");
-        scanf("%d", &ch);
-        switch (ch) {
+int main_menu()
+{
+    int choose;
+    printf("Choose the operation that you want to perform:\n");
+    printf("Press 1 for creation.\n");
+    printf("Press 2 for insertion.\n");
+    printf("Press 3 for deletion.\n");
+    printf("Press 4 for traversal.\n");
+    printf("Press 5 for Exit.\n");
+    scanf("%d", &choose);
+    return choose;
+}
+
+int insertion_menu()
+{
+    int choose;
+    printf("Choose the operation that you want to perform:\n");
+    printf("Press 1 for insertion at beginning.\n");
+    printf("Press 2 for insertion at specify position.\n");
+    printf("Press 3 for insertion at end.\n");
+    scanf("%d", &choose);
+    return choose;
+}
+
+int deletion_menu()
+{
+    int choose;
+    printf("Choose the operation that you want to perform:\n");
+    printf("Press 1 for deletion at beginning.\n");
+    printf("Press 2 for deletion at specify position.\n");
+    printf("Press 3 for deletion at end.\n");
+    scanf("%d", &choose);
+    return choose;
+}
+
+int main()
+{
+    int main_choice;
+    int insertion_choice;
+    int deletion_choice;
+
+    do
+    {
+        main_choice = main_menu();
+        switch (main_choice)
+        {
+        case 1:
+            creation();
+            printf("\n");
+            break;
+
+        case 2:
+            insertion_choice = insertion_menu();
+            switch (insertion_choice)
+            {
             case 1:
-                creation();
+                insertion_at_beginning();
+                printf("After Insertion!\n");
+                traversal();
+                printf("\n");
                 break;
+
             case 2:
-                printf("1.Begin 2.Position 3.End\nChoice: ");
-                scanf("%d", &ch2);
-                if (ch2 == 1) insertBegin();
-                else if (ch2 == 2) insertPos();
-                else if (ch2 == 3) insertEnd();
+                insertion_at_specific_position();
+                printf("After Insertion!\n");
                 traversal();
+                printf("\n");
                 break;
+
             case 3:
-                printf("1.Begin 2.Position 3.End\nChoice: ");
-                scanf("%d", &ch2);
-                if (ch2 == 1) deleteBegin();
-                else if (ch2 == 2) deletePos();
-                else if (ch2 == 3) deleteEnd();
+                insertion_at_end();
+                printf("After Insertion!\n");
                 traversal();
+                printf("\n");
                 break;
-            case 4:
-                traversal();
-                break;
-            case 5:
-                return 0;
+
             default:
-                printf("Wrong choice!\n");
+                printf("You press the wrong button!\n");
+                printf("\n");
                 break;
+            }
+
+            break;
+
+        case 3:
+            deletion_choice = deletion_menu();
+            switch (deletion_choice)
+            {
+            case 1:
+                deletion_at_beginning();
+                printf("After deletion!\n");
+                traversal();
+                printf("\n");
+                break;
+
+            case 2:
+                deletion_at_specific_position();
+                printf("After deletion!\n");
+                traversal();
+                printf("\n");
+                break;
+
+            case 3:
+                deletion_at_end();
+                printf("After deletion!\n");
+                traversal();
+                printf("\n");
+
+                break;
+
+            default:
+                printf("You press the wrong button!\n");
+                printf("\n");
+                break;
+            }
+
+            break;
+
+        case 4:
+            traversal();
+            printf("\n");
+            break;
+
+        case 5:
+            return 0;
+
+        default:
+            printf("You Press the wrong button!\n");
+            printf("\n");
         }
     } while (1);
+
     return 0;
 }
-
-
-// 1.Creation 2.Insertion 3.Deletion 4.Traversal 5.Exit
-// Choice: 1
-// Enter data: 10
-// List: 10
-
-// Choice: 1
-// Enter data: 20
-// List: 1020
-
-// Choice: 1
-// Enter data: 30
-// List: 102030
-
-// Choice: 4
-// List: 102030
-
-// Choice: 2
-// 1.Begin 2.Position 3.End
-// Choice: 1
-// Enter data: 5
-// Inserted 5 at begin
-// List: 5102030
-
-// Choice: 2
-// 1.Begin 2.Position 3.End
-// Choice: 2
-// Enter position: 3
-// Enter data: 15
-// Inserted 15 at pos 3
-// List: 510152030
-
-// Choice: 2
-// 1.Begin 2.Position 3.End
-// Choice: 3
-// Enter data: 40
-// Inserted 40 at end
-// List: 51015203040
-
-// Choice: 3
-// 1.Begin 2.Position 3.End
-// Choice: 1
-// Deleted 5
-// List: 1015203040
-
-// Choice: 3
-// 1.Begin 2.Position 3.End
-// Choice: 2
-// Enter position: 3
-// Deleted 20
-// List: 10153040
-
-// Choice: 3
-// 1.Begin 2.Position 3.End
-// Choice: 3
-// Deleted 40
-// List: 101530
-
-// Choice: 2
-// 1.Begin 2.Position 3.End
-// Choice: 2
-// Enter position: 10
-// Enter data: 50
-// Invalid position!
-
-// Choice: 3
-// 1.Begin 2.Position 3.End
-// Choice: 1
-// Deleted 10
-// List: 1530
-
-// Choice: 3
-// 1.Begin 2.Position 3.End
-// Choice: 1
-// Deleted 15
-// List: 30
-
-// Choice: 3
-// 1.Begin 2.Position 3.End
-// Choice: 1
-// Deleted 30
-// List:
-
-// Choice: 3
-// 1.Begin 2.Position 3.End
-// Choice: 1
-// List is EMPTY
-
-// Choice: 5

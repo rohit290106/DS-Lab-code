@@ -1,181 +1,366 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef struct node {
+typedef struct circular_linked_list
+{
     int data;
-    struct node *next;
-}node;
+    struct circular_linked_list *next;
+} node;
 
- node *start = NULL;
+node *start = NULL;
 
-/* Insert at beginning */
-void insert_begin(int value) {
-     node *newnode = ( node *)malloc(sizeof( node));
-    newnode->data = value;
-
-    if (start == NULL) {
-        newnode->next = newnode;
-        start = newnode;
-    } else {
-        newnode->next = start->next;
-        start->next = newnode;
+node *getnode()
+{
+    node *ptr = (node *)malloc(sizeof(node));
+    if (ptr == NULL)
+    {
+        printf("Memory is full!, node can't be created");
+        return 0;
     }
+
+    int value;
+    printf("Enter the value:");
+    scanf("%d", &value);
+
+    ptr->data = value;
+    ptr->next = NULL;
+
+    return ptr;
 }
 
-/* Insert at end */
-void insert_end(int value) {
-     node *newnode = ( node *)malloc(sizeof( node));
-    newnode->data = value;
+void create_node()
+{
+    node *newnode;
+    node *temp;
 
-    if (start == NULL) {
-        newnode->next = newnode;
-        start = newnode;
-    } else {
-        newnode->next = start->next;
-        start->next = newnode;
-        start = newnode;
-    }
-}
+    int count;
+    printf("Enter the no. of nodes that you want to be created:");
+    scanf("%d", &count);
 
-/* Delete from beginning */
-void delete_begin() {
-    if (start == NULL) {
-        printf("List is empty\n");
-        return;
-    }
+    for (int i = 0; i < count; i++)
+    {
+        newnode = getnode();
 
-     node *temp = start->next;
+        if (start == NULL)
+        {
+            start = newnode;
+            temp = start;
+            start->next = start;
+        }
+        else
+        {
+            temp = start;
 
-    if (start->next == start) {
-        start = NULL;
-    } else {
-        start->next = temp->next;
-    }
-    free(temp);
-}
+            while (temp->next != start)
+                temp = temp->next;
 
-/* Delete from end */
-void delete_end() {
-    if (start == NULL) {
-        printf("List is empty\n");
-        return;
-    }
-
-     node *temp = start->next;
-
-    if (start->next == start) {
-        free(start);
-        start = NULL;
-        return;
-    }
-
-    while (temp->next != start) {
-        temp = temp->next;
-    }
-    temp->next = start->next;
-    free(start);
-    start = temp;
-}
-
-/* Display list */
-void display() {
-    if (start == NULL) {
-        printf("List is empty\n");
-        return;
-    }
-
-     node *temp = start->next;
-    do {
-        printf("%d -> ", temp->data);
-        temp = temp->next;
-    } while (temp != start->next);
-    printf("(Back to Head)\n");
-}
-
-int main() {
-    int choice, value;
-
-    while (1) {
-        printf("\n--- Circular Linked List Menu ---\n");
-        printf("1. Insert at Beginning\n");
-        printf("2. Insert at End\n");
-        printf("3. Delete from Beginning\n");
-        printf("4. Delete from End\n");
-        printf("5. Display\n");
-        printf("6. Exit\n");
-        printf("Enter your choice: ");
-        scanf("%d", &choice);
-
-        switch (choice) {
-        case 1:
-            insert_begin(5);
-            break;
-        case 2:
-            insert_end(5);
-            break;
-        case 3:
-            delete_begin();
-            break;
-        case 4:
-            delete_end();
-            break;
-        case 5:
-            display();
-            break;
-        case 6:
-            exit(0);
-        default:
-            printf("Invalid choice\n");
+            temp->next = newnode;
+            newnode->next = start;
         }
     }
-    return 0;
 }
 
-// --- Circular Linked List Menu ---
+void insert_at_beginning()
+{
+    node *newnode = getnode();
+    node *temp = start;
 
-// 1. Insert at Beginning
-// 2. Insert at End
-// 3. Delete from Beginning
-// 4. Delete from End
-// 5. Display
-// 6. Exit
-//    Enter your choice: 1
+    if (start == NULL)
+    {
+        start == newnode;
+        start->next == start;
+        return;
+    }
 
-// Enter your choice: 1
+    while (temp->next != start)
+        temp = temp->next;
 
-// Enter your choice: 2
+    newnode->next = start;
+    temp->next = newnode;
+    start = newnode;
+}
 
-// Enter your choice: 2
+void insert_at_end()
+{
+    node *newnode = getnode();
+    node *temp = start;
 
-// Enter your choice: 5
-// 5 -> 5 -> 5 -> 5 -> (Back to Head)
+    if (start == NULL)
+    {
+        start = newnode;
+        start = start->next;
+        return;
+    }
 
-// Enter your choice: 3
+    while (temp->next != start)
+        temp = temp->next;
 
-// Enter your choice: 5
-// 5 -> 5 -> 5 -> (Back to Head)
+    temp->next = newnode;
+    newnode->next = start;
+}
 
-// Enter your choice: 4
+void insert_at_position()
+{
+    node *newnode = getnode();
+    node *temp = start;
+    int position;
+    int i = 1;
 
-// Enter your choice: 5
-// 5 -> 5 -> (Back to Head)
+    if (start == NULL)
+    {
+        start = newnode;
+        start = start->next;
+        return;
+    }
 
-// Enter your choice: 3
+    printf("Enter the position of insertion from 1 to %d:\n", count());
+    scanf("%d", &position);
 
-// Enter your choice: 3
+    if (position < 1)
+    {
+        printf("Position is invalid!\n");
+        return;
+    }
+    else if (position == 1)
+    {
+        insert_at_beginning();
+    }
+    else
+    {
+        while (temp != start && i < position - 1)
+        {
+            temp = temp->next;
+            i++;
+        }
 
-// Enter your choice: 5
-// 5 -> (Back to Head)
+        if (temp == start)
+        {
+            printf("Position is invalid!\n");
+            return;
+        }
 
-// Enter your choice: 4
+        newnode->next = temp->next;
+        temp->next = newnode;
+    }
+}
 
-// Enter your choice: 5
-// List is empty
+void delete_at_beginning()
+{
+    node *temp = start;
+    node *hold = start;
 
-// Enter your choice: 3
-// List is empty
+    if (start == NULL)
+    {
+        printf("List is Empty!");
+        return;
+    }
 
-// Enter your choice: 4
-// List is empty
+    while (temp->next != start)
+        temp = temp->next;
 
-// Enter your choice: 6
+    start = start->next;
+    temp->next = start;
+    printf("The deleted data is %d.\n", hold->data);
+    free(hold);
+}
+
+void delete_at_end()
+{
+    node *temp_front = start->next;
+    node *temp_back = start;
+
+    if (start == NULL)
+    {
+        printf("List is Empty!");
+        return;
+    }
+
+    while (temp_front->next != start)
+    {
+        temp_back = temp_front;
+        temp_front = temp_front->next;
+    }
+
+    temp_back->next = start;
+    printf("The deleted data is %d.\n", temp_front->data);
+    free(temp_front);
+}
+
+void delete_at_position()
+{
+    node *temp_front = start->next;
+    node *temp_back = start;
+    int position;
+    int i = 1;
+
+    if (start == NULL)
+    {
+        printf("List is Empty!\n");
+        return;
+    }
+
+    printf("Enter the position of deletion from 1 to %d:\n", count());
+    scanf("%d", &position);
+
+    if (position < 1)
+    {
+        printf("Position is invalid!\n");
+        return;
+    }
+    else if (position == 1)
+    {
+        delete_at_beginning();
+    }
+    else
+    {
+        while (temp_front != start && i < position - 1)
+        {
+            temp_back = temp_front;
+            temp_front = temp_front->next;
+            i++;
+        }
+
+        if (temp_front == start)
+        {
+            printf("Position is invalid!\n");
+            return;
+        }
+
+        temp_back->next = temp_front->next;
+        printf("The deleted data is %d.\n", temp_front->data);
+        free(temp_front);
+    }
+}
+void traverse()
+{
+    node *temp = start;
+    int i = 1;
+
+    if (start == NULL)
+    {
+        printf("List is Empty!");
+        return;
+    }
+
+    do
+    {
+        printf("Element %d:%d\n", i++, temp->data);
+        temp = temp->next;
+    } while (temp != start);
+}
+
+int count()
+{
+    node *temp = start;
+    int i = 0;
+
+    while (temp != NULL)
+    {
+        temp = temp->next;
+        i++;
+    }
+
+    return i;
+}
+
+int menu()
+{
+    int choice;
+    printf("Press 1 for creation.\n");
+    printf("Press 2 for count.\n");
+    printf("Press 3 for insertion.\n");
+    printf("Press 4 for delete.\n");
+    printf("Press 5 for display.\n");
+    printf("Press 6 for exit.\n");
+    scanf("%d", &choice);
+    return choice;
+}
+
+int insertion_menu()
+{
+    int insert_choice;
+    printf("Press 1 for insertion at beginning.\n");
+    printf("Press 2 for insert at position.\n");
+    printf("Press 3 for insert at end.\n");
+    scanf("%d", &insert_choice);
+    return insert_choice;
+}
+
+int deletion_menu()
+{
+    int delete_choice;
+    printf("Press 1 for insertion at beginning.\n");
+    printf("Press 2 for insert at position.\n");
+    printf("Press 3 for insert at end.\n");
+    scanf("%d", &delete_choice);
+    return delete_choice;
+}
+
+int main()
+{
+    int choice;
+    int insert_choice;
+    int delete_choice;
+
+    do
+    {
+        choice = menu();
+
+        switch (choice)
+        {
+        case 1:
+            create_node();
+            break;
+
+        case 2:
+            count();
+            break;
+
+        case 3:
+            insert_choice = insertion_menu();
+            switch (insert_choice)
+            {
+            case 1:
+                insert_at_beginning();
+                break;
+            case 2:
+                insert_at_position();
+                break;
+            case 3:
+                insert_at_end();
+                break;
+            default:
+                printf("You press wrong button!");
+            }
+            break;
+
+        case 4:
+            delete_choice = deletion_menu();
+            switch (delete_choice)
+            {
+            case 1:
+                delete_at_beginning();
+                break;
+            case 2:
+                delete_at_position();
+                break;
+            case 3:
+                delete_at_end();
+                break;
+            default:
+                printf("You press wrong button!");
+            }
+            break;
+
+        case 5:
+            printf("Exiting program ... \n");
+            return 0;
+
+        default:
+            printf("You press wrong button!\n");
+            break;
+        }
+    }while(choice!=5);
+    
+    return 0;
+}
