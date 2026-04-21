@@ -1,102 +1,113 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define MAX 5
+typedef struct node
+{
+    int size;
+    int front;
+    int rear;
+    int *array;
+} queue;
 
-/* -------- ARRAY QUEUE -------- */
-int aqueue[MAX], frontA = -1, rearA = -1;
-
-void enqueueA(int x) {
-    if (rearA == MAX - 1) {
-        printf("Array Queue Overflow\n");
-        return;
-    }
-    if (frontA == -1) frontA = 0;
-    aqueue[++rearA] = x;
+int isFull(queue *q)
+{
+    return (q->rear == q->size - 1);
 }
 
-void dequeueA() {
-    if (frontA == -1 || frontA > rearA) {
-        printf("Array Queue Underflow\n");
-        return;
-    }
-    printf("Deleted (Array): %d\n", aqueue[frontA++]);
+int isEmpty(queue *q)
+{
+    return (q->front == q->rear);
 }
 
-void displayA() {
-    for (int i = frontA; i <= rearA; i++)
-        printf("%d ", aqueue[i]);
+void enqueue(queue *q)
+{
+    if (isFull(q))
+    {
+        printf("Queue is overflow enqueue operation can't be performed.\n");
+    }
+
+    int value;
+    printf("Enter the value you want to push in queue:\n");
+    scanf("%d", &value);
+
+    q->rear++;
+    q->array[q->rear] = value;
+    printf("The push value in a queue is %d\n\n", q->array[q->rear]);
+}
+
+void dequeue(queue *q)
+{
+    if (isEmpty(q))
+    {
+        printf("Queue is underflow dequeue operation can't be performed.\n\n");
+        return;
+    }
+
+    q->front++;
+    int value = q->array[q->front];
+    printf("The pop value in a queue is %d\n\n", value);
+
+    if (q->front == q->rear)
+        q->front = q->rear = -1;
+}
+
+void display(queue *q)
+{
+    if (isEmpty(q))
+    {
+        printf("Queue is underflow display operation can't be performed.\n\n");
+    }
+    printf("The element in a queue!\n");
+
+    for (int i = q->front + 1; i <= q->rear; i++)
+    {
+        printf("Element:%d\n", q->array[i]);
+    }
+
     printf("\n");
 }
 
-/* -------- LINKED LIST QUEUE -------- */
-struct node {
-    int data;
-    struct node *next;
-};
-
-struct node *frontL = NULL, *rearL = NULL;
-
-void enqueueL(int x) {
-    struct node *temp = (struct node*)malloc(sizeof(struct node));
-    temp->data = x;
-    temp->next = NULL;
-
-    if (rearL == NULL)
-        frontL = rearL = temp;
-    else {
-        rearL->next = temp;
-        rearL = temp;
-    }
+int menu()
+{
+    int choice;
+    printf("Enter the operation you want to perform in a queue.\n");
+    printf("press 1 for enqueue.\n");
+    printf("press 2 for dequeue.\n");
+    printf("press 3 for display.\n");
+    printf("press 4 for exit.\n");
+    printf("Enter your choice:\n");
+    scanf("%d", &choice);
+    return choice;
 }
 
-void dequeueL() {
-    if (frontL == NULL) {
-        printf("Linked Queue Underflow\n");
-        return;
+int main()
+{
+    queue *q = (queue *)malloc(sizeof(queue));
+    q->size = 10;
+    q->front = q->rear = -1;
+    q->array = (int *)malloc(q->size * sizeof(int));
+
+    while (1)
+    {
+        switch (menu())
+        {
+        case 1:
+            enqueue(q);
+            break;
+        case 2:
+            dequeue(q);
+            break;
+        case 3:
+            display(q);
+            break;
+        case 4:
+            free(q->array);
+            free(q);
+            return 0;
+        default:
+            printf("You press wrong button!try again.\n\n");
+        }
     }
-    struct node *temp = frontL;
-    printf("Deleted (Linked): %d\n", temp->data);
-    frontL = frontL->next;
-    free(temp);
-}
-
-void displayL() {
-    struct node *temp = frontL;
-    while (temp != NULL) {
-        printf("%d ", temp->data);
-        temp = temp->next;
-    }
-    printf("\n");
-}
-
-/* -------- MAIN -------- */
-int main() {
-    /* Array Queue */
-    enqueueA(10);
-    enqueueA(20);
-    enqueueA(30);
-    printf("Array Queue: ");
-    displayA();
-    dequeueA();
-    displayA();
-
-    /* Linked List Queue */
-    enqueueL(10);
-    enqueueL(20);
-    enqueueL(30);
-    printf("Linked Queue: ");
-    displayL();
-    dequeueL();
-    displayL();
 
     return 0;
 }
-
-// Array Queue: 10 20 30
-// Deleted (Array): 10
-// 20 30
-
-// Linked Queue: 10 20 30
-// Deleted (Linked): 10
-// 20 30
